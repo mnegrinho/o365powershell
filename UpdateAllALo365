@@ -1,0 +1,12 @@
+$AddressLists=get-AddressList
+ForEach ($AddressList in $AddressLists){
+$ALi=Get-AddressList -Identity $AddressList.Identity
+$Recipients=Get-Recipient -RecipientPreviewFilter $ALi.RecipientFilter -ResultSize Unlimited| select primarysmtpaddress
+$Count=$Recipients.count
+Write-host "$AddressList | #$Count Recipients"
+
+if($Count -gt 0){
+Write-Host "$AddressList have $Count recipients to update"
+$i=0
+$Recipients | % {Update-Recipient $_.primarysmtpaddress;$i++;Write-Progress -Activity "Updating $AdressList with [$Count] Recipients." -Status $i -PercentComplete (($i/$Count)*100) }}
+}
